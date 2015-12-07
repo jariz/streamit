@@ -22,7 +22,7 @@ module.exports =
     start: (cb) ->
       @started = +new Date()
       log.log "info", "Scheduler is initializing..."
-      every('20m').do => @refresh false
+      every('10s').do => @refresh false
       @refresh false, cb
 
     process: (@icecast) ->
@@ -53,6 +53,10 @@ module.exports =
       # if clearOld is true, remove previous queue
       Reddit.getLinks (err, links) =>
         cb err if err and cb
-        if not clearOld then @queue = @queue.concat links
+        if not clearOld
+          #grab everything that isn't already in the queue & push it to the end
+          newlinks = links.filter (item) => @queue.indexOf item isnt -1
+          if newlinks.length > 0 then log.log "Queued", newlinks.length, "new links"
+          @queue.push link for link in newlinks
         else @queue = links
         cb null if cb
