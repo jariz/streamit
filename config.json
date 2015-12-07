@@ -1,0 +1,16 @@
+{
+  "host": "127.0.0.1",
+  "port": 8000,
+  "pass": "hackme",
+  "mount": "/jari",
+  "subreddits": [
+    "trap",
+    "futurebass",
+    "clubmuzik",
+    "internetmusic",
+    "trapmuzik"
+  ],
+  "amount": 200,
+  "sort": "new",
+  "period": "day"
+}
