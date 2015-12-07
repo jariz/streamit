@@ -1,16 +1,26 @@
 {
-  "host": "127.0.0.1",
-  "port": 8000,
-  "pass": "hackme",
-  "mount": "/jari",
-  "subreddits": [
-    "trap",
-    "futurebass",
-    "clubmuzik",
-    "internetmusic",
-    "trapmuzik"
-  ],
-  "amount": 200,
-  "sort": "new",
-  "period": "day"
+  "radio": {
+    "host": "127.0.0.1",
+    "port": 8000,
+    "pass": "hackme",
+    "mount": "/jari"
+  },
+  "reddit": {
+    "subreddits": [
+      "trap",
+      "futurebass",
+      "clubmuzik",
+      "internetmusic",
+      "trapmuzik"
+    ],
+    "amount": 200,
+    "sort": "new",
+    "period": "day"
+  },
+  "api": {
+    "enabled": true,
+    "port": 1212,
+    "pubnub": true,
+    "publish_key": ""
+  }
 }

@@ -5,16 +5,22 @@ Track = require './track'
 async = require 'async'
 
 module.exports =
-  class Scheduler
+  class Scheduler extends require('events').EventEmitter
 
     # array with soundcloud links pulled from reddit
     queue: []
     # current position in queue
     queuePos: 0
 
+    # Current track
+    track: undefined
+
     icecast: undefined
 
+    started: undefined
+
     start: (cb) ->
+      @started = +new Date()
       log.log "info", "Scheduler is initializing..."
       every('20m').do => @refresh false
       @refresh false, cb
@@ -23,18 +29,20 @@ module.exports =
       async.whilst (=> @queuePos < @queue.length)
       , ((cb) =>
           link = @queue[@queuePos]
-          track = new Track link
-          track.resolve (err) =>
+          @track = new Track link
+          @track.resolve (err) =>
             if err
               log.log "warn", "Unable to resolve url", link, "Skipping!"
               @queuePos++
               return cb()
 
-            track.stream @icecast, =>
+            @emit "newtrack", @track
+            @track.stream @icecast, =>
               @queuePos++
               cb() #play next
 
       ), (=>
+          @emit "restart"
           log.log "warn", "Woops, appears we've gone through the queue."
           log.log "warn", "Getting new links and restarting..."
           @refresh true, => @process()

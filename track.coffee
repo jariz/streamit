@@ -9,9 +9,10 @@ module.exports =
   class Track extends require("events").EventEmitter
     mp3Url: undefined
     scUrl: undefined
+    redditUrl: undefined
     mp3Stream: undefined
     title: ""
-    track: undefined
+    metadata: undefined
 
     constructor: (@scUrl) ->
       @parser = new parser()
@@ -22,17 +23,14 @@ module.exports =
       request
         uri: "https://api.soundcloud.com/resolve?url=" + @scUrl + "&client_id=" + clientid
         json: true
-      .then (track) =>
-        @track = track
-        if not @track.stream_url then return cb new Error('Invalid soundcloud track url')
+      .then (@metadata) =>
+        if not @metadata.stream_url then return cb new Error('Invalid soundcloud track url')
 
-        dashIndex = @track.title.indexOf "-"
-        if dashIndex isnt -1
-          @title = @track.title
-        else
-          @title = @track.user.username + " - " + @track.title
+        dashIndex = @metadata.title.indexOf "-"
+        if dashIndex isnt -1 then @title = @metadata.title
+        else @title = @metadata.user.username + " - " + @metadata.title
 
-        stream_url = @track.stream_url + "?client_id=" + clientid
+        stream_url = @metadata.stream_url + "?client_id=" + clientid
         log.log "info", "Playing", @title
         request
           uri: stream_url
@@ -43,10 +41,10 @@ module.exports =
           @mp3Url = response.headers.location
           cb()
         .catch (err) =>
-          log.log "error", "Unable to resolve soundcloud stream url"
+          log.log "error", err
           cb err
       .catch (err) ->
-        log.log "error", "Unable to resolve soundcloud url"
+        log.log "error", err
         cb err
 
     stream: (output, cb) ->
@@ -64,14 +62,15 @@ module.exports =
       interval =
         setInterval =>
           if chunks.length is 0 then return
-          if chunkIndex is chunks.length
-            clearInterval interval
-            progress.terminate()
-            cb null
-            return
 
           progress = new Progress ' [:bar] :percent', total: 100 if not progress
           progress.update chunkIndex / chunks.length
+
+          if chunkIndex is chunks.length
+            clearInterval interval
+            cb null
+            return
+
           chunk = chunks[chunkIndex]
           output.write chunk.data
           chunkIndex++
