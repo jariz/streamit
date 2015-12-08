@@ -22,14 +22,14 @@ module.exports =
     start: (cb) ->
       @started = +new Date()
       log.log "info", "Scheduler is initializing..."
-      every('10s').do => @refresh false
+      every('20m').do => @refresh false
       @refresh false, cb
 
     process: (@icecast) ->
       async.whilst (=> @queuePos < @queue.length)
       , ((cb) =>
           link = @queue[@queuePos]
-          @track = new Track link
+          @track = new Track link.url, "https://www.reddit.com" + link.permalink
           @track.resolve (err) =>
             if err
               log.log "warn", "Unable to resolve url", link, "Skipping!"

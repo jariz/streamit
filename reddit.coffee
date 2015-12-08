@@ -18,7 +18,7 @@ module.exports =
       .then (resp) ->
         links = []
         resp.data.children.forEach (child) ->
-          links.push child.data.url
+          links.push child.data
         log.log "info", "[reddit] got", links.length, "links"
         cb null, links
       .catch (err) ->

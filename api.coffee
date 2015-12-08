@@ -15,6 +15,7 @@ module.exports =
       @server.use restify.acceptParser(@server.acceptable)
       @server.use restify.queryParser()
       @server.use restify.bodyParser()
+      @server.use restify.CORS()
 
       @server.get "/", => @home.apply @, arguments
       @server.get "/current", => @current.apply @, arguments
@@ -36,5 +37,6 @@ module.exports =
       res.send
         "title": @scheduler.track.title
         "link": @scheduler.track.scUrl
+        "comments": @scheduler.track.redditUrl
         "metadata": @scheduler.track.metadata
       next()

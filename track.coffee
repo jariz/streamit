@@ -14,7 +14,7 @@ module.exports =
     title: ""
     metadata: undefined
 
-    constructor: (@scUrl) ->
+    constructor: (@scUrl, @redditUrl) ->
       @parser = new parser()
       @emitDuration = 0.2 * 1000
 
