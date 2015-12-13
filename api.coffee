@@ -1,11 +1,13 @@
 restify = require 'restify'
 config = require './config.json'
 log = require('./log')()
+pubnub = require 'pubnub'
 
 module.exports =
   class Api
     server: undefined
     scheduler: undefined
+    pubnub: undefined
 
     constructor: (@scheduler) ->
       @server = restify.createServer
@@ -23,6 +25,22 @@ module.exports =
     start: ->
       @server.listen config.api.port
       log.log "info", "API online at http://127.0.0.1:" + config.api.port + "/" #todo hardcoded, ew.
+
+      if config.api.pubnub
+        @pubnub = new pubnub
+          ssl: true
+          publish_key: config.api.publish_key
+          subscribe_key: config.api.subscribe_key
+
+        @scheduler.on "newtrack", (track) =>
+          @pubnub.publish
+            channel: 'tracks'
+            message:
+              "title": track.title
+              "link": track.scUrl
+              "comments": track.redditUrl
+              "metadata": track.metadata
+
 
     home: (req, res, next) ->
       res.send

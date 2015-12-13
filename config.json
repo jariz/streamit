@@ -21,6 +21,7 @@
     "enabled": true,
     "port": 1212,
     "pubnub": true,
-    "publish_key": ""
+    "publish_key": "",
+    "subscribe_key": ""
   }
 }

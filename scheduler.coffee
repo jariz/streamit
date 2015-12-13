@@ -23,7 +23,7 @@ module.exports =
       @started = +new Date()
       log.log "info", "Scheduler is initializing..."
       every('20m').do => @refresh false
-      @refresh false, cb
+      @refresh true, cb
 
     process: (@icecast) ->
       async.whilst (=> @queuePos < @queue.length)
@@ -32,7 +32,7 @@ module.exports =
           @track = new Track link.url, "https://www.reddit.com" + link.permalink
           @track.resolve (err) =>
             if err
-              log.log "warn", "Unable to resolve url", link, "Skipping!"
+              log.log "warn", "Unable to resolve url", link.url, "Skipping!"
               @queuePos++
               return cb()
 
@@ -55,7 +55,7 @@ module.exports =
         cb err if err and cb
         if not clearOld
           #grab everything that isn't already in the queue & push it to the end
-          newlinks = links.filter (item) => @queue.indexOf item isnt -1
+          newlinks = links.filter (item) => @queue.indexOf(item) isnt -1
           if newlinks.length > 0 then log.log "Queued", newlinks.length, "new links"
           @queue.push link for link in newlinks
         else @queue = links
