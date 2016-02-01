@@ -21,7 +21,7 @@ module.exports =
       .then (resp) ->
         links = []
         resp.data.children.forEach (child) ->
-          if config.reddit.onlyPositive and child.data.score < 1 then return
+          if config.reddit.onlyPositive and child.data.score <= 1 then return
           links.push child.data
         log.log "info", "[reddit] got", links.length, "links"
         cb null, links
