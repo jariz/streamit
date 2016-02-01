@@ -12,6 +12,7 @@ module.exports =
     redditUrl: undefined
     mp3Stream: undefined
     title: ""
+    artist: ""
     metadata: undefined
 
     constructor: (@scUrl, @redditUrl) ->
@@ -27,8 +28,13 @@ module.exports =
         if not @metadata.stream_url then return cb new Error('Invalid soundcloud track url')
 
         dashIndex = @metadata.title.indexOf "-"
-        if dashIndex isnt -1 then @title = @metadata.title
-        else @title = @metadata.user.username + " - " + @metadata.title
+        if dashIndex isnt -1
+          @title = @metadata.title.substring dashIndex + 2
+          @artist = @metadata.title.substring 0, dashIndex
+        else
+          @title = @metadata.title
+          @artist = @metadata.user.username
+
 
         stream_url = @metadata.stream_url + "?client_id=" + clientid
         log.log "info", "Playing", @title

@@ -15,13 +15,12 @@
     ],
     "amount": 200,
     "sort": "new",
-    "period": "day"
+    "period": "week",
+    "onlyPositive": true
   },
   "api": {
     "enabled": true,
     "port": 1212,
-    "pubnub": true,
-    "publish_key": "",
-    "subscribe_key": ""
+    "websocket": true
   }
 }
