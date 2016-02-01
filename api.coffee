@@ -29,13 +29,17 @@ module.exports =
 
       if config.api.websocket
         @scheduler.on "newtrack", (track) =>
-          @io.emit 'track',
-            "title": track.title
-            "artist": track.artist
-            "link": track.scUrl
-            "comments": track.redditUrl
-            "metadata": track.metadata
+          @io.emit 'track', @trackToJSON track
 
+    trackToJSON: (track) =>
+      if typeof track is "undefined" then return undefined
+
+      "title": track.title
+      "artist": track.artist
+      "link": track.scUrl
+      "comments": track.redditUrl
+      "metadata": track.metadata
+      "next": @trackToJSON track.next
 
     home: (req, res, next) ->
       res.send
@@ -47,10 +51,5 @@ module.exports =
       next()
 
     current: (req, res, next) ->
-      res.send
-        "title": @scheduler.track.title
-        "artist": @scheduler.track.artist
-        "link": @scheduler.track.scUrl
-        "comments": @scheduler.track.redditUrl
-        "metadata": @scheduler.track.metadata
+      res.send @trackToJSON @scheduler.track
       next()

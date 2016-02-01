@@ -11,6 +11,7 @@ module.exports =
     scUrl: undefined
     redditUrl: undefined
     mp3Stream: undefined
+    next: undefined
     title: ""
     artist: ""
     metadata: undefined
@@ -37,7 +38,6 @@ module.exports =
 
 
         stream_url = @metadata.stream_url + "?client_id=" + clientid
-        log.log "info", "Playing", @title
         request
           uri: stream_url
           followRedirect: false
@@ -54,6 +54,7 @@ module.exports =
         cb err
 
     stream: (output, cb) ->
+      log.log "info", "Playing", @title
       #open mp3 url as stream, run parser, run chunker, pipe to icecast
       @chunker = new FrameChunker @emitDuration
       chunks = []

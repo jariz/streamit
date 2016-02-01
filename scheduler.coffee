@@ -36,10 +36,24 @@ module.exports =
               @queuePos++
               return cb()
 
-            @emit "newtrack", @track
-            @track.stream @icecast, =>
-              @queuePos++
-              cb() #play next
+            nextlink = @queue[@queuePos+1]
+            if nextlink
+              #if there's a next link, resolve it.
+              nexttrack = new Track nextlink.url, "https://www.reddit.com" + nextlink.permalink
+              nexttrack.resolve (err) =>
+                if err
+                  log.log "warn", "Unable to resolve next url", nextlink.url, "next property will be left undefined."
+                  stream()
+                  return
+                @track.next = nexttrack
+                stream()
+            else stream()
+
+            stream = =>
+              @emit "newtrack", @track
+              @track.stream @icecast, =>
+                @queuePos++
+                cb() #play next
 
       ), (=>
           @emit "restart"
