@@ -22,7 +22,7 @@ module.exports =
     start: (cb) ->
       @started = +new Date()
       log.log "info", "Scheduler is initializing..."
-      every('20m').do => @refresh false
+      every('10m').do => @refresh false
       @refresh true, cb
 
     process: (@icecast) ->
@@ -72,5 +72,7 @@ module.exports =
           newlinks = links.filter (item) => @queue.indexOf(item) isnt -1
           if newlinks.length > 0 then log.log "Queued", newlinks.length, "new links"
           @queue.push link for link in newlinks
-        else @queue = links
+        else
+          @queuePos = 0
+          @queue = links
         cb null if cb
