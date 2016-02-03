@@ -24,6 +24,10 @@ module.exports =
               log.log "error", "Unable to connect to IceCast source.", err
               return
 
+            @icecast.on "end", =>
+              log.error "error", "FATAL: Disconnected from source!"
+              process.exit 2
+
             log.log "info", "Connected to " + config.radio.host + ":" + config.radio.port + " successfully!"
 
             # start API
