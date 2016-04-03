@@ -4,7 +4,7 @@ Turn any subreddit into a real radio station!
 ##wat
 Streamit gets the hottest soundcloud tracks from reddit and then streams it over a IceCast radio stream!  
 It will refresh every 20 minutes, queueing newly posted tracks.  
-Streamit offers a API and a websocket integration (through pubnub).
+Streamit offers a API and a websocket integration (through socket.io).
 
 ###Features
 - Multiple subreddit configuration
